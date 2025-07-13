@@ -1,17 +1,14 @@
 import jwt from 'jsonwebtoken';
-import { config } from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-config({ path: path.resolve(__dirname, '../../../.env') });
-config({ path: path.resolve(__dirname, '../.env') });
 
 // Use environment variables directly
-const JWT_SECRET = process.env.JWT_SECRET;
-const NODE_ENV = process.env.NODE_ENV;
+const JWT_SECRET = "mysecretkey";
+const NODE_ENV = process.env.NODE_ENV === "production";
 
 export const generateToken = (userId, res) => {
     const token = jwt.sign({ userId }, JWT_SECRET, {

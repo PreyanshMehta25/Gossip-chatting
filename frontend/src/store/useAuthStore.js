@@ -3,7 +3,6 @@ import axiosInstance from '../lib/axios.js';
 import toast from 'react-hot-toast';
 import { io } from 'socket.io-client';
 
-const BASE_URL = 'http://localhost:8000';
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,
@@ -63,10 +62,11 @@ export const useAuthStore = create((set, get) => ({
             const res = await axiosInstance.post("/auth/login", data);
             set({ authUser: res.data });
             toast.success("Logged in successfully");
-
             get().connectSocket();
         } catch (error) {
-            toast.error(error.response.data.message);
+            const message = error?.response?.data?.message || "Login failed";
+            toast.error(message);
+            console.log("Error in login of useAuthStore:", message);
         } finally {
             set({ isLoggingIn: false });
         }
@@ -90,7 +90,7 @@ export const useAuthStore = create((set, get) => ({
         const { authUser } = get();
         if (!authUser || get().socket?.connected) return;
 
-        const socket = io(BASE_URL, {
+        const socket = io("http://localhost:8000", {
             query: {
                 userId: authUser._id
             },

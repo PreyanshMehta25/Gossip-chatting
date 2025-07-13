@@ -42,13 +42,16 @@ const Navbar = () => {
                   <User className="size-5" />
                   <span className="hidden sm:inline">Profile</span>
                 </Link>
-                <button className="flex gap-2 items-center cursor-pointer" onClick={logout}>
+                <button
+                  onClick={logout}
+                  className="btn btn-sm gap-2 bg-red-600 hover:bg-red-700 text-white"
+                >
                   <LogOut className="size-5" />
                   <span className="hidden sm:inline">Logout</span>
                 </button>
               </>
             )}
-          </div> 
+          </div>
         </div>
       </div>
     </header>

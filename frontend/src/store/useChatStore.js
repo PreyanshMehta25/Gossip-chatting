@@ -22,15 +22,16 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  getMessages: async (userId) => {
-    set({ isMessagesLoading: true });
+  getMessages: async (req, res) => {
     try {
-      const res = await axiosInstance.get(`/messages/${userId}`);
-      set({ messages: res.data });
+      const userId = req.body;
+      console.log("Fetching messages for:", userId); // ✅ Check this logs
+      const res = await axios.get(`/api/messages/${userId}`);
+      set({ messages: res.data }); // oldest to newest
+
+      res.status(200).json(messages);
     } catch (error) {
-      toast.error(error.response.data.message);
-    } finally {
-      set({ isMessagesLoading: false });
+      res.status(500).json({ message: "Failed to fetch messages" });
     }
   },
   sendMessage: async (messageData) => {

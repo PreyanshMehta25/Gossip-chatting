@@ -8,13 +8,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from .env file
-// Try to load from the root directory first, then from the src directory
-config({ path: path.resolve(__dirname, '../../.env') });
-config({ path: path.resolve(__dirname, '../.env') });
 
 // Use environment variables directly
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = "mysecretkey";
 
 export const protectRoute = async (req, res, next) => {
     try {

@@ -3,12 +3,13 @@ import { generateToken } from '../lib/utils.js';
 import { User } from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import { config } from 'dotenv';
+import jwt from 'jsonwebtoken';
 
 // Load environment variables from .env file
 config();
 
 // Use environment variables directly
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = "mysecretkey";
 
 export const signup = async (req, res) => {
     const { name, email, password } = req.body;

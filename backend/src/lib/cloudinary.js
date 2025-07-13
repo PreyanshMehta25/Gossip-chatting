@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { config } from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -7,10 +6,6 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from .env file
-// Try to load from the root directory first, then from the src directory
-config({ path: path.resolve(__dirname, '../../../.env') });
-config({ path: path.resolve(__dirname, '../.env') });
 
 // Use environment variables directly
 const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;

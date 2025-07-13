@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { THEMES } from "../constants/index.js";
+import { THEMES } from "../components/constants/index";
 
 let theme = localStorage.getItem("chat-theme");
 if (!THEMES.includes(theme)) {

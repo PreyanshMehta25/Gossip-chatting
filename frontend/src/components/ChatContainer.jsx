@@ -11,33 +11,26 @@ const ChatContainer = () => {
     messages = [],
     getMessages,
     isMessagesLoading,
-    selectedUser ,
+    selectedUser,
     subscribeToMessages,
     unsubscribeFromMessages,
   } = useChatStore();
-  const { authUser  } = useAuthStore();
+
+  const { authUser } = useAuthStore();
   const messagesEndRef = useRef(null);
 
-  // Get messages when selected user changes
+  // 🟢 Fetch previous messages & subscribe to real-time ones
   useEffect(() => {
-    if (selectedUser ?._id) {
-      getMessages(selectedUser ._id); // Ensure this fetches messages for both users
-      subscribeToMessages(); // Ensure this updates the messages state on new messages
-
+    if (selectedUser?._id) {
+      getMessages(selectedUser._id); // Fetch all previous messages
+      subscribeToMessages(selectedUser._id); // Pass selected user ID to receive updates
       return () => unsubscribeFromMessages();
     }
-  }, [
-    selectedUser ?._id, // Use optional chaining to avoid errors if selectedUser  is null
-    getMessages,
-    subscribeToMessages,
-    unsubscribeFromMessages,
-  ]);
+  }, [selectedUser?._id]);
 
-  // Scroll to bottom of messages
+  // 🔵 Scroll to bottom on new message
   useEffect(() => {
-    if (messages.length > 0) { // Check if there are messages to scroll
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   if (isMessagesLoading) {
@@ -50,27 +43,22 @@ const ChatContainer = () => {
     );
   }
 
-const relevantMessages = messages.filter((message) => {
-  const sender = message.senderId.toString();
-  const receiver = message.receiverId.toString();
-  const authId = authUser._id.toString();
-  const selectedId = selectedUser._id.toString();
+  // 🟡 Filter only messages between authUser and selectedUser
+  const relevantMessages = messages.filter((message) => {
+    const sender = String(message.senderId?._id || message.senderId);
+    const receiver = String(message.receiverId?._id || message.receiverId);
+    const authId = String(authUser._id);
+    const selectedId = String(selectedUser._id);
 
-  return (
-    (sender === authId && receiver === selectedId) ||
-    (sender === selectedId && receiver === authId)
+    return (
+      (sender === authId && receiver === selectedId) ||
+      (sender === selectedId && receiver === authId)
+    );
+  });
+
+  const sortedMessages = relevantMessages.sort(
+    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
   );
-});
-
-const sortedMessages = relevantMessages.sort(
-  (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-);
-console.log({
-  senderId: messages.senderId,
-  receiverId: messages.receiverId,
-  authId: authUser._id,
-});
-
 
   return (
     <div className="flex flex-col h-full">
@@ -83,8 +71,10 @@ console.log({
           </div>
         ) : (
           sortedMessages.map((message) => {
-            // Check if the message is sent by the authenticated user
-            const isSentByMe = message.senderId === authUser ._id || message.senderId?._id === authUser ._id;
+            const isSentByMe =
+              String(message.senderId?._id || message.senderId) ===
+              String(authUser._id);
+
             return (
               <div
                 key={message._id}
@@ -95,8 +85,8 @@ console.log({
                     <img
                       src={
                         isSentByMe
-                          ? authUser .profilePic || "/avatar.png"
-                          : selectedUser ?.profilePic || "/avatar.png"
+                          ? authUser.profilePic || "/avatar.png"
+                          : selectedUser?.profilePic || "/avatar.png"
                       }
                       alt="profile pic"
                     />

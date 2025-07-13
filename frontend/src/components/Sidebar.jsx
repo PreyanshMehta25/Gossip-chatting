@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
-import { Users } from "lucide-react";
+import { Group, Users } from "lucide-react";
+import GroupSelection from "./GroupSelection";
 
 const Sidebar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } =
@@ -15,6 +16,9 @@ const Sidebar = () => {
     getUsers();
   }, [getUsers]);
 
+  const newGroup = () => {
+    return <GroupSelection />;
+  };
   const filteredUsers = showOnlineOnly
     ? users.filter((user) => onlineUsers.includes(user._id))
     : users;
@@ -27,8 +31,13 @@ const Sidebar = () => {
         <div className="flex items-center gap-2">
           <Users className="size-6" />
           <span className="font-medium hidden lg:block">Contacts</span>
+          <button
+            onClick={newGroup}
+            className="btn btn-sm bg-base-200 hover:bg-base-300 transition-colors ml-auto cursor-pointer rounded-lg"
+          >
+            Group
+          </button>
         </div>
-        {/* TODO: Online filter toggle */}
         <div className="mt-3 hidden lg:flex items-center gap-2">
           <label className="cursor-pointer flex items-center gap-2">
             <input
@@ -40,7 +49,7 @@ const Sidebar = () => {
             <span className="text-sm">Show online only</span>
           </label>
           <span className="text-xs text-zinc-500">
-            ({onlineUsers.length - 1} online)
+            ({filteredUsers.filter((u) => onlineUsers.includes(u._id)).length} online)
           </span>
         </div>
       </div>
@@ -55,7 +64,7 @@ const Sidebar = () => {
               hover:bg-base-300 transition-colors
               ${
                 selectedUser?._id === user._id
-                  ? "bg-base-300 ring-1 ring-base-300"
+                  ? "bg-primary/10 border-l-4 border-primary"
                   : ""
               }
             `}
